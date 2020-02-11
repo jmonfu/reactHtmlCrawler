@@ -3,7 +3,8 @@ import $ from "jquery";
 
 const initialState = {
   innerText: '',
-  matchDay: [],
+  matchDays: [
+  ]
 };
 
 class ReadHtml extends React.Component {
@@ -32,18 +33,30 @@ class ReadHtml extends React.Component {
           player.name = this.extractNameFromLink(rows[i].cells[0].innerHTML);
           player.points = this.extractNumber(rows[i].cells[2].innerHTML);
           playersArr = playersArr.concat(player);
-  
-          //this.setState({ players: [...this.state.players, player] })
         }
       };
 
-      this.setState({ matchDay: {header: head[0].innerText, players: playersArr} });
+      let matchDay = [];
+      matchDay = matchDay.concat({header: head[0].innerText, players: playersArr});
+
+      this.addItem(matchDay);
+      // this.setState({ matchDays: {...this.state.matchDays, matchDay} });
+      alert('Ready!:-' + matchDay[0].header);
 
     };
 
     // Read in the HTML file.
     reader.readAsText(file);
   };
+
+  addItem = matchDay => {
+    this.setState({
+      matchDays: [
+        ...this.state.matchDays,
+        matchDay 
+      ]
+    })
+  }
 
   resetState = () => {
     this.setState(initialState);
@@ -64,38 +77,10 @@ class ReadHtml extends React.Component {
     return /\d/.test(t);
   }
 
-  // renderTableData() {
-  //   if (this.state.matchDay) {
-  //     return this.state.matchDay.players.map((player, index) => {
-  //       const { id, name, points } = player //destructuring
-  //       return (
-  //         <tr key={id}>
-  //           <td>{id}</td>
-  //           <td>{name}</td>
-  //           <td>{points}</td>
-  //         </tr>
-  //       )
-  //     })
-  //   }
-  //   else {
-  //     return (
-  //       <div>No Data at Present</div>
-  //     )
-  //   }
-  // }
-
   render() {
     return (
       <div>
         Select a file : <input type="file" onChange={(e) => this.handleFileSelect(e)} /><br /><br />
-        <div id="displayPage">
-        <h1 id='title'>{this.state.header}</h1>
-            <table id='players'>
-               <tbody>
-                  {/* {this.renderTableData()} */}
-               </tbody>
-            </table>
-        </div>
       </div>
     )
   }
