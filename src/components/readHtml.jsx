@@ -3,8 +3,7 @@ import $ from "jquery";
 
 const initialState = {
   innerText: '',
-  header: '',
-  players: [],
+  matchDay: [],
 };
 
 class ReadHtml extends React.Component {
@@ -12,7 +11,6 @@ class ReadHtml extends React.Component {
 
   handleFileSelect = (evt) => {
     evt.preventDefault();
-    this.resetState();
     var file = evt.target.files[0];
     var reader = new FileReader();
 
@@ -23,8 +21,9 @@ class ReadHtml extends React.Component {
 
       var tbody = $('<div/>').append(this.state.innerText).find('tbody').get();
       var head = $('<div/>').append(this.state.innerText).find('h1').get();
-      this.setState({header: head[0].innerText});
       var rows = tbody[0].rows;
+
+      let playersArr = [];
 
       for (var i = 0; i < rows.length; i++) {
         if ( this.hasNumbers(rows[i].cells[0].innerHTML)) {
@@ -32,10 +31,13 @@ class ReadHtml extends React.Component {
           player.id = this.extractNumber(rows[i].cells[0].innerHTML);
           player.name = this.extractNameFromLink(rows[i].cells[0].innerHTML);
           player.points = this.extractNumber(rows[i].cells[2].innerHTML);
+          playersArr = playersArr.concat(player);
   
-          this.setState({ players: [...this.state.players, player] })
+          //this.setState({ players: [...this.state.players, player] })
         }
       };
+
+      this.setState({ matchDay: {header: head[0].innerText, players: playersArr} });
 
     };
 
@@ -62,18 +64,25 @@ class ReadHtml extends React.Component {
     return /\d/.test(t);
   }
 
-  renderTableData() {
-    return this.state.players.map((player, index) => {
-      const { id, name, points } = player //destructuring
-      return (
-        <tr key={id}>
-          <td>{id}</td>
-          <td>{name}</td>
-          <td>{points}</td>
-        </tr>
-      )
-    })
-  }
+  // renderTableData() {
+  //   if (this.state.matchDay) {
+  //     return this.state.matchDay.players.map((player, index) => {
+  //       const { id, name, points } = player //destructuring
+  //       return (
+  //         <tr key={id}>
+  //           <td>{id}</td>
+  //           <td>{name}</td>
+  //           <td>{points}</td>
+  //         </tr>
+  //       )
+  //     })
+  //   }
+  //   else {
+  //     return (
+  //       <div>No Data at Present</div>
+  //     )
+  //   }
+  // }
 
   render() {
     return (
@@ -83,7 +92,7 @@ class ReadHtml extends React.Component {
         <h1 id='title'>{this.state.header}</h1>
             <table id='players'>
                <tbody>
-                  {this.renderTableData()}
+                  {/* {this.renderTableData()} */}
                </tbody>
             </table>
         </div>
